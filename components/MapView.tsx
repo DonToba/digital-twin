@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useRef } from 'react';
@@ -36,10 +37,7 @@ export default function MapView({ buildings, extra, threeD }: Props) {
 
     map.on('load', () => {
       const addGeoJsonSource = (id: string, data: FeatureCollection) => {
-        map.addSource(id, {
-          type: 'geojson',
-          data,
-        });
+        map.addSource(id, { type: 'geojson', data });
       };
 
       const addPolygonLayer = (
@@ -49,9 +47,6 @@ export default function MapView({ buildings, extra, threeD }: Props) {
         opacity: number,
         height: number,
       ) => {
-        // Keep the layer type literal in each branch. A conditional
-        // 'fill' | 'fill-extrusion' type widens the MapLibre layer union
-        // and causes TypeScript to reject the source/paint combination.
         if (threeD) {
           map.addLayer({
             id,
@@ -145,10 +140,9 @@ export default function MapView({ buildings, extra, threeD }: Props) {
           type: 'line',
           source: sourceId,
           filter: [
-            'in',
-            ['geometry-type'],
-            'LineString',
-            'MultiLineString',
+            'any',
+            ['==', ['geometry-type'], 'LineString'],
+            ['==', ['geometry-type'], 'MultiLineString'],
           ],
           paint: {
             'line-color': '#b7ed6b',
@@ -160,7 +154,11 @@ export default function MapView({ buildings, extra, threeD }: Props) {
           id: `extra-point-${index}`,
           type: 'circle',
           source: sourceId,
-          filter: ['in', ['geometry-type'], 'Point', 'MultiPoint'],
+          filter: [
+            'any',
+            ['==', ['geometry-type'], 'Point'],
+            ['==', ['geometry-type'], 'MultiPoint'],
+          ],
           paint: {
             'circle-radius': 5,
             'circle-color': '#b7ed6b',
@@ -184,7 +182,9 @@ export default function MapView({ buildings, extra, threeD }: Props) {
     if (!map) return;
 
     const updateBuildings = () => {
-      const source = map.getSource('buildings') as GeoJSONSource | undefined;
+      const source = map.getSource('buildings') as
+        | GeoJSONSource
+        | undefined;
       source?.setData(buildings);
     };
 
