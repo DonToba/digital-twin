@@ -9,7 +9,7 @@ export default function MapView({buildings,extra,threeD}:Props){
  const node=useRef<HTMLDivElement>(null);const mapRef=useRef<Map|null>(null);
  useEffect(()=>{
   if(!node.current)return;
-  const map=new maplibregl.Map({container:node.current,style:process.env.NEXT_PUBLIC_MAP_STYLE||'https://demotiles.maplibre.org/style.json',center:[3.405,6.458],zoom:14.2,pitch:threeD?55:0,bearing:-15,antialias:true});
+const map = new maplibregl.Map({container: node.current, style: process.env.NEXT_PUBLIC_MAP_STYLE || 'https://demotiles.maplibre.org/style.json',  center: [3.405, 6.458],zoom: 14.2,pitch: threeD ? 55 : 0,bearing: -15});
   map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
   map.on('load',()=>{
    const add=(id:string,data:FeatureCollection)=>map.addSource(id,{type:'geojson',data});
